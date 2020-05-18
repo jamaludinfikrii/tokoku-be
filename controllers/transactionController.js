@@ -78,7 +78,37 @@ const onBayarClick = (req,res) => {
    
 }
 
+
+
+const getAllTransaction = (req,res) => {
+    const users_id = req.params.users_id
+    const sql = 'select * from transaction where users_id = ?'
+    db.query(sql,users_id,(err,result) => {
+        try {
+            if(err) throw err
+            res.send({ error :false , data: result})
+        } catch (err) {
+            res.send({ error: true,message : err.message})
+        }
+    })
+}
+
+const getTransactionDetailByIdTransaction = (req,res) => {
+    const transaction_id = req.params.transaction_id
+    const sql = 'select * from transaction_detail where transaction_id = ?;'
+    db.query(sql,transaction_id,(err,result) => {
+        try {
+            if(err) throw err
+            res.send({ error :false , data: result})
+        } catch (err) {
+            res.send({ error: true,message : err.message})
+        }
+    })
+}
+
 module.exports = {
-    onBayarClick
+    onBayarClick,
+    getAllTransaction,
+    getTransactionDetailByIdTransaction 
 }
 
