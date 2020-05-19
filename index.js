@@ -9,7 +9,7 @@ app.get('/' , (req,res) => {
     res.send('Hello')
 })
 
-
+app.use('/', require('./routers/productRouter'))
 app.use('/cart',require('./routers/cartRouter'))
 app.use('/transaction',require('./routers/transactionRouter'))
 app.use('/public' , express.static('public'))
