@@ -1,4 +1,5 @@
 const db = require('./../database/mysql')
+const {uploader} = require('./../helpers/uploader')
 
 const onBayarClick = (req,res) => {
     const data = req.body
@@ -105,10 +106,48 @@ const getTransactionDetailByIdTransaction = (req,res) => {
         }
     })
 }
+const postPaymentConfirmation = (req,res) => {
+    console.log('masuk')
+    const upload = uploader('/payment','PAY').single('pay_image')
+
+    upload(req,res, (err) => {
+        if(err) throw err
+        const image = req.file
+        const data = JSON.parse(req.body.data)
+        const id = req.params.transaction_id
+        console.log(image)
+        console.log(data)
+        console.log(id)
+
+        const dataToUpdate = {
+            status : 2,
+            payment_proof_url : req.file.path,
+            nomor_rekening : data.no_rek,
+            nama_rekening : data.nama
+        }
+
+        const sql = 'update transaction set ? where id = ?;'
+        db.query(sql,[dataToUpdate,id],(err,result) => {
+            try {
+                if(err) throw err
+                res.json({
+                    error : false,
+                    message :"Payment Proof Updated"
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+    }) 
+
+
+}
 
 module.exports = {
     onBayarClick,
     getAllTransaction,
-    getTransactionDetailByIdTransaction 
+    getTransactionDetailByIdTransaction,
+    postPaymentConfirmation 
 }
 
