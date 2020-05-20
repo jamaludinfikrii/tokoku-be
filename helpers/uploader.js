@@ -34,6 +34,7 @@ const uploader = (destination, fileNamePrefix) => {
     };
 
     return multer({
+        limits : { fieldSize: 10 * 1024 * 1024 },
         storage,
         fileFilter: imageFilter
     });

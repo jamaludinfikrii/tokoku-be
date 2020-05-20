@@ -94,6 +94,27 @@ const getAllTransaction = (req,res) => {
     })
 }
 
+const getTransactionFiltered = (req,res) => {
+    const users_id = req.query.users_id
+    const status = req.query.status
+    let sql = 'select * from transaction where users_id = ?'
+    if(status !== 'all'){
+        if(status === '345'){
+            sql += ` and (status = ${status[0]} or status = ${status[1]} or status = ${status[2]});`
+        }else{
+            sql += ' and status = ' + status 
+        }
+    }
+    db.query(sql,users_id,(err,result) => {
+         try {
+            if(err) throw err
+            res.send({ error :false , data: result})
+        } catch (err) {
+            res.send({ error: true,message : err.message})
+        }
+    })
+}
+
 const getTransactionDetailByIdTransaction = (req,res) => {
     const transaction_id = req.params.transaction_id
     const sql = 'select * from transaction_detail where transaction_id = ?;'
@@ -148,6 +169,7 @@ module.exports = {
     onBayarClick,
     getAllTransaction,
     getTransactionDetailByIdTransaction,
-    postPaymentConfirmation 
+    postPaymentConfirmation ,
+    getTransactionFiltered
 }
 
