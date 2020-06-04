@@ -16,7 +16,23 @@ const login = (req,res) => {
     })
 }
 
+
+const register = (req,res) => {
+    const data = req.body
+    const sql = 'insert into users set ?'
+    db.query(sql,data,(err,result) => {
+        if(err) throw err
+        res.send([{
+            username : data.username,
+            password : data.password,
+            email:  data.email,
+            id : result.insertId
+        }])
+    })
+}
+
 const testNotif = (request,response) => {
+    console.log('masuk')
     var sendNotification = function(data) {
         var headers = {
             "Content-Type": "application/json; charset=utf-8",
@@ -62,4 +78,7 @@ const testNotif = (request,response) => {
 
 
 
-module.exports = {login , testNotif}
+
+
+
+module.exports = {login , testNotif ,register}
