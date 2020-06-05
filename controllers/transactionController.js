@@ -1,5 +1,7 @@
 const db = require('./../database/mysql')
 const {uploader} = require('./../helpers/uploader')
+const sendNotification = require('./../helpers/sendNotif')
+require('dotenv').config()
 
 const onBayarClick = (req,res) => {
     const data = req.body
@@ -165,11 +167,29 @@ const postPaymentConfirmation = (req,res) => {
 
 }
 
+const approvedPayment = (req,res) => {
+    const data = req.body // {id_transaction, id_user}
+    const sql = 'update transaction set status = 3 where id = ?'
+    db.query(sql,data.id_transaction,(err,result) => {
+        if(err) throw err
+        var message = {
+            app_id: process.env.APP_ID_ONE_SIGNAL,
+            contents: {"en": "Your transaction proof has been approved by Admin !!!"},
+            headings : {"en" : "Transaction Status !!!"},
+            include_external_user_ids: [data.id_user]
+        }
+        sendNotification(message,res)
+        // kita send notif
+    })
+
+}
+
 module.exports = {
     onBayarClick,
     getAllTransaction,
     getTransactionDetailByIdTransaction,
     postPaymentConfirmation ,
-    getTransactionFiltered
+    getTransactionFiltered,
+    approvedPayment
 }
 
